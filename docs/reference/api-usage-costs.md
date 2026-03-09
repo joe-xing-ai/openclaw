@@ -132,3 +132,35 @@ Skills can store `apiKey` in `skills.entries.<name>.apiKey`. If a skill uses tha
 APIs, it can incur costs according to the skill’s provider.
 
 See [Skills](/tools/skills).
+
+## Common culprits for runaway usage
+
+If your API or token usage is higher than expected, check these first:
+
+**1. Heartbeat interval too aggressive**
+
+The gateway runs a periodic heartbeat that calls the model. The default is every 30 minutes
+(`agents.defaults.heartbeat.every`, see `src/auto-reply/heartbeat.ts`). If that’s too frequent
+for your usage or rate limits:
+
+- Set a longer interval, e.g. `openclaw config set agents.defaults.heartbeat.every "1h"` or `"2h"`.
+- To disable heartbeat entirely, set `agents.defaults.heartbeat.every` to `"0"` (no automatic runs).
+
+**2. No context limits set**
+
+Unbounded context can grow session size and per-request token usage. Use:
+
+- `agents.defaults.bootstrapMaxChars` / `agents.defaults.bootstrapTotalMaxChars` to cap injected
+  bootstrap content (see [Token use & costs](/reference/token-use)).
+- Session compaction and pruning (e.g. cache TTL, `/compact`) so history doesn’t grow without limit.
+
+**3. Agent repeatedly restarting services**
+
+If the agent can invoke gateway or system restarts (e.g. via tools or RPC), it may retry restarts
+in a loop and trigger many startup/heartbeat runs. Mitigations:
+
+- Restrict or allowlist which tools the agent can use (e.g. gateway tool allowlists).
+- On systemd, set `WatchdogSec=300` (or higher) in the service unit so the watchdog doesn’t
+  restart the process too often; the generated unit in `src/daemon/systemd-unit.ts` uses 300s by default.
+- Review agent prompts and HEARTBEAT.md so the agent isn’t instructed to “restart” or “fix”
+  the service repeatedly.

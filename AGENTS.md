@@ -1,8 +1,8 @@
 # Repository Guidelines
 
-- Repo: https://github.com/openclaw/openclaw
+- Repo: [https://github.com/openclaw/openclaw](https://github.com/openclaw/openclaw)
 - In chat replies, file references must be repo-root relative only (example: `extensions/bluebubbles/src/channel.ts:80`); never absolute paths or `~/...`.
-- GitHub issues/comments/PR comments: use literal multiline strings or `-F - <<'EOF'` (or $'...') for real newlines; never embed "\\n".
+- GitHub issues/comments/PR comments: use literal multiline strings or `-F - <<'EOF'` (or $'...') for real newlines; never embed "n".
 - GitHub comment footgun: never use `gh issue/pr comment -b "..."` when body contains backticks or shell chars. Always use single-quoted heredoc (`-F - <<'EOF'`) so no command substitution/escaping corruption.
 - GitHub linking footgun: don’t wrap issue/PR refs like `#24643` in backticks when you want auto-linking. Use plain `#24643` (optionally add full URL).
 - GitHub searching footgun: don't limit yourself to the first 500 issues or PRs when wanting to search all. Unless you're supposed to look at the most recent, keep going until you've reached the last page in the search
@@ -36,7 +36,7 @@
 
 ## Docs i18n (zh-CN)
 
-- `docs/zh-CN/**` is generated; do not edit unless the user explicitly asks.
+- `docs/zh-CN/`** is generated; do not edit unless the user explicitly asks.
 - Pipeline: update English docs → adjust glossary (`docs/.i18n/glossary.zh-CN.json`) → run `scripts/docs-i18n` → apply targeted fixes only if instructed.
 - Translation memory: `docs/.i18n/zh-CN.tm.jsonl` (generated).
 - See `docs/.i18n/README.md`.
@@ -50,7 +50,7 @@
 - Config: use `openclaw config set ...`; ensure `gateway.mode=local` is set.
 - Discord: store raw token only (no `DISCORD_BOT_TOKEN=` prefix).
 - Restart: stop old gateway and run:
-  `pkill -9 -f openclaw-gateway || true; nohup openclaw gateway run --bind loopback --port 18789 --force > /tmp/openclaw-gateway.log 2>&1 &`
+`pkill -9 -f openclaw-gateway || true; nohup openclaw gateway run --bind loopback --port 18789 --force > /tmp/openclaw-gateway.log 2>&1 &`
 - Verify: `openclaw channels status --probe`, `ss -ltnp | rg 18789`, `tail -n 120 /tmp/openclaw-gateway.log`.
 
 ## Build, Test, and Development Commands
@@ -62,7 +62,7 @@
 - Also supported: `bun install` (keep `pnpm-lock.yaml` + Bun patching in sync when touching deps/patches).
 - Prefer Bun for TypeScript execution (scripts, dev, tests): `bun <file.ts>` / `bunx <tool>`.
 - Run CLI in dev: `pnpm openclaw ...` (bun) or `pnpm dev`.
-- Node remains supported for running built output (`dist/*`) and production installs.
+- Node remains supported for running built output (`dist/`*) and production installs.
 - Mac packaging (dev): `scripts/package-mac-app.sh` defaults to current arch. Release checklist: `docs/platforms/mac/release.md`.
 - Type-check/build: `pnpm build`
 - TypeScript checks: `pnpm tsgo`
@@ -132,7 +132,7 @@
 - PRs: `gh search prs --repo openclaw/openclaw --match title,body --limit 50 -- "auto-update"`
 - Issues: `gh search issues --repo openclaw/openclaw --match title,body --limit 50 -- "auto-update"`
 - Structured output example:
-  `gh search issues --repo openclaw/openclaw --match title,body --limit 50 --json number,title,state,url,updatedAt -- "auto update" --jq '.[] | "\(.number) | \(.state) | \(.title) | \(.url)"'`
+`gh search issues --repo openclaw/openclaw --match title,body --limit 50 --json number,title,state,url,updatedAt -- "auto update" --jq '.[] | "\(.number) | \(.state) | \(.title) | \(.url)"'`
 
 ## Security & Configuration Tips
 
@@ -148,8 +148,8 @@
 - Fetch: `gh api /repos/openclaw/openclaw/security-advisories/<GHSA>`
 - Latest npm: `npm view openclaw version --userconfig "$(mktemp)"`
 - Private fork PRs must be closed:
-  `fork=$(gh api /repos/openclaw/openclaw/security-advisories/<GHSA> | jq -r .private_fork.full_name)`
-  `gh pr list -R "$fork" --state open` (must be empty)
+`fork=$(gh api /repos/openclaw/openclaw/security-advisories/<GHSA> | jq -r .private_fork.full_name)`
+`gh pr list -R "$fork" --state open` (must be empty)
 - Description newline footgun: write Markdown via heredoc to `/tmp/ghsa.desc.md` (no `"\\n"` strings)
 - Build patch JSON via jq: `jq -n --rawfile desc /tmp/ghsa.desc.md '{summary,severity,description:$desc,vulnerabilities:[...]}' > /tmp/ghsa.patch.json`
 - GHSA API footgun: cannot set `severity` and `cvss_vector_string` in the same PATCH; do separate calls.
@@ -160,6 +160,7 @@
 ## Troubleshooting
 
 - Rebrand/migration issues or legacy config/service warnings: run `openclaw doctor` (see `docs/gateway/doctor.md`).
+- **High token/API usage:** Common culprits are (1) heartbeat interval too aggressive — set `agents.defaults.heartbeat.every` to `"1h"` or `"0"` to disable; (2) no context limits — use `bootstrapMaxChars`/`bootstrapTotalMaxChars` and compaction; (3) agent restarting services repeatedly — restrict restart tools, set `WatchdogSec=300` in systemd unit. See `docs/reference/api-usage-costs.md` (Common culprits).
 
 ## Agent-Specific Notes
 
@@ -189,7 +190,7 @@
 - Notary auth env vars (`APP_STORE_CONNECT_ISSUER_ID`, `APP_STORE_CONNECT_KEY_ID`, `APP_STORE_CONNECT_API_KEY_P8`) are expected in your environment (per internal release docs).
 - **Multi-agent safety:** do **not** create/apply/drop `git stash` entries unless explicitly requested (this includes `git pull --rebase --autostash`). Assume other agents may be working; keep unrelated WIP untouched and avoid cross-cutting state changes.
 - **Multi-agent safety:** when the user says "push", you may `git pull --rebase` to integrate latest changes (never discard other agents' work). When the user says "commit", scope to your changes only. When the user says "commit all", commit everything in grouped chunks.
-- **Multi-agent safety:** do **not** create/remove/modify `git worktree` checkouts (or edit `.worktrees/*`) unless explicitly requested.
+- **Multi-agent safety:** do **not** create/remove/modify `git worktree` checkouts (or edit `.worktrees/`*) unless explicitly requested.
 - **Multi-agent safety:** do **not** switch branches / check out a different branch unless explicitly requested.
 - **Multi-agent safety:** running multiple agents is OK as long as each agent has its own session.
 - **Multi-agent safety:** when you see unrecognized files, keep going; focus on your changes and commit only those.
@@ -230,9 +231,9 @@
   - `eval "$(op signin --account my.1password.com)"`
 - 1Password helpers:
   - password used by `npm login`:
-    `op item get Npmjs --format=json | jq -r '.fields[] | select(.id=="password").value'`
+  `op item get Npmjs --format=json | jq -r '.fields[] | select(.id=="password").value'`
   - OTP:
-    `op read 'op://Private/Npmjs/one-time password?attribute=otp'`
+  `op read 'op://Private/Npmjs/one-time password?attribute=otp'`
 - Fast publish loop (local helper script in `/tmp` is fine; keep repo clean):
   - compare local plugin `version` to `npm view <name> version`
   - only run `npm publish --access public --otp="<otp>"` when versions differ
@@ -249,7 +250,6 @@
   - Create prerelease with title `openclaw YYYY.M.D-beta.N`.
   - Use release notes from `CHANGELOG.md` version section (`Changes` + `Fixes`, no title duplicate).
   - Attach at least `OpenClaw-YYYY.M.D.zip` and `OpenClaw-YYYY.M.D.dSYM.zip`; include `.dmg` if available.
-
 - Keep top version entries in `CHANGELOG.md` sorted by impact:
   - `### Changes` first.
   - `### Fixes` deduped and ranked with user-facing fixes first.
@@ -257,3 +257,4 @@
   - `node --import tsx scripts/release-check.ts`
   - `pnpm release:check`
   - `pnpm test:install:smoke` or `OPENCLAW_INSTALL_SMOKE_SKIP_NONROOT=1 pnpm test:install:smoke` for non-root smoke path.
+

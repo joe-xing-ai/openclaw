@@ -173,3 +173,6 @@ rejects that combination with HTTP 401.
 - Prefer smaller models for verbose, exploratory work.
 
 See [Skills](/tools/skills) for the exact skill list overhead formula.
+
+For **runaway usage** (heartbeat too frequent, unbounded context, or the agent restarting services
+repeatedly), see [API usage & costs – Common culprits](/reference/api-usage-costs#common-culprits-for-runaway-usage).

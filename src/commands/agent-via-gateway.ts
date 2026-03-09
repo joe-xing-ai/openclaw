@@ -51,6 +51,8 @@ export type AgentCliOpts = {
   runId?: string;
   extraSystemPrompt?: string;
   local?: boolean;
+  /** When true, do not fall back to embedded if the gateway is unreachable; exit with a clear error. */
+  gatewayOnly?: boolean;
 };
 
 function parseTimeoutSeconds(opts: { cfg: ReturnType<typeof loadConfig>; timeout?: string }) {
@@ -190,6 +192,12 @@ export async function agentCliCommand(opts: AgentCliOpts, runtime: RuntimeEnv, d
   try {
     return await agentViaGatewayCommand(opts, runtime);
   } catch (err) {
+    if (opts.gatewayOnly === true) {
+      const msg =
+        "Gateway is not available. Start it with `pnpm gateway:watch` (or `openclaw gateway start`), or run without --gateway-only to use the embedded agent.";
+      runtime.error?.(msg);
+      throw new Error(`${msg} Original error: ${String(err)}`);
+    }
     runtime.error?.(`Gateway agent failed; falling back to embedded: ${String(err)}`);
     return await agentCommand(localOpts, runtime, deps);
   }

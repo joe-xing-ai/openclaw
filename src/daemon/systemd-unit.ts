@@ -59,6 +59,9 @@ export function buildSystemdUnit({
     `ExecStart=${execStart}`,
     "Restart=always",
     "RestartSec=5",
+    // Avoid aggressive watchdog restarts: default can be too low, causing constant
+    // restarts (e.g. during slow LLM calls) and burning tokens on each startup.
+    "WatchdogSec=300",
     // Keep service children in the same lifecycle so restarts do not leave
     // orphan ACP/runtime workers behind.
     "KillMode=control-group",
