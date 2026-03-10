@@ -1,0 +1,12 @@
+{
+  "name": "@openclaw/linkedin",
+  "version": "2026.3.2",
+  "description": "LinkedIn posting tool for OpenClaw (draft and publish posts)",
+  "type": "module",
+  "dependencies": {},
+  "openclaw": {
+    "extensions": [
+      "./index.ts"
+    ]
+  }
+}

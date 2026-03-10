@@ -1,0 +1,10 @@
+{
+  "id": "linkedin",
+  "name": "LinkedIn",
+  "description": "Draft and publish LinkedIn posts. Auth via linkedin auth profile or LINKEDIN_ACCESS_TOKEN.",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  }
+}

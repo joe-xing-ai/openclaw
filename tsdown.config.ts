@@ -26,6 +26,7 @@ const pluginSdkEntrypoints = [
   "google-gemini-cli-auth",
   "googlechat",
   "irc",
+  "linkedin",
   "llm-task",
   "lobster",
   "matrix",

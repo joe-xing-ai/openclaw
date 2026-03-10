@@ -22,6 +22,7 @@ const bundledExtensionSubpathLoaders = [
   },
   { id: "googlechat", load: () => import("openclaw/plugin-sdk/googlechat") },
   { id: "irc", load: () => import("openclaw/plugin-sdk/irc") },
+  { id: "linkedin", load: () => import("openclaw/plugin-sdk/linkedin") },
   { id: "llm-task", load: () => import("openclaw/plugin-sdk/llm-task") },
   { id: "lobster", load: () => import("openclaw/plugin-sdk/lobster") },
   { id: "matrix", load: () => import("openclaw/plugin-sdk/matrix") },

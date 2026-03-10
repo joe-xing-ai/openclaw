@@ -252,6 +252,15 @@ const entries: SubCliEntry[] = [
     },
   },
   {
+    name: "redaction",
+    description: "Scan for tokens or secret-like content in the codebase",
+    hasSubcommands: true,
+    register: async (program) => {
+      const mod = await import("../redaction-cli.js");
+      mod.registerRedactionCli(program);
+    },
+  },
+  {
     name: "security",
     description: "Security tools and local config audits",
     hasSubcommands: true,

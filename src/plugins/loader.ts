@@ -121,6 +121,7 @@ const pluginSdkScopedAliasEntries = [
   },
   { subpath: "googlechat", srcFile: "googlechat.ts", distFile: "googlechat.js" },
   { subpath: "irc", srcFile: "irc.ts", distFile: "irc.js" },
+  { subpath: "linkedin", srcFile: "linkedin.ts", distFile: "linkedin.js" },
   { subpath: "llm-task", srcFile: "llm-task.ts", distFile: "llm-task.js" },
   { subpath: "lobster", srcFile: "lobster.ts", distFile: "lobster.js" },
   { subpath: "matrix", srcFile: "matrix.ts", distFile: "matrix.js" },

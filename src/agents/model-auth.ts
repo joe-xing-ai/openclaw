@@ -1,9 +1,10 @@
 import path from "node:path";
 import { type Api, getEnvApiKey, type Model } from "@mariozechner/pi-ai";
 import { formatCliCommand } from "../cli/command-format.js";
-import type { OpenClawConfig } from "../config/config.js";
+import { loadConfig, type OpenClawConfig } from "../config/config.js";
 import type { ModelProviderAuthMode, ModelProviderConfig } from "../config/types.js";
 import { getShellEnvAppliedKeys } from "../infra/shell-env.js";
+import { logInfo } from "../logger.js";
 import {
   normalizeOptionalSecretInput,
   normalizeSecretInput,
@@ -323,6 +324,7 @@ export function resolveEnvApiKey(provider: string): EnvApiKeyResult | null {
     ollama: "OLLAMA_API_KEY",
     vllm: "VLLM_API_KEY",
     kilocode: "KILOCODE_API_KEY",
+    linkedin: "LINKEDIN_ACCESS_TOKEN",
   };
   const envVar = envMap[normalized];
   if (!envVar) {
@@ -411,4 +413,41 @@ export function requireApiKey(auth: ResolvedProviderAuth, provider: string): str
     return key;
   }
   throw new Error(`No API key resolved for provider "${provider}" (auth mode: ${auth.mode}).`);
+}
+
+/**
+ * Resolve LinkedIn access token from auth profiles (for the linkedin extension).
+ * Uses provider id "linkedin"; supports token/oauth profiles and LINKEDIN_ACCESS_TOKEN env.
+ */
+export async function resolveLinkedInAccessToken(agentDir?: string): Promise<string | null> {
+  const cfg = loadConfig();
+  let result: ResolvedProviderAuth | null = null;
+  try {
+    result = await resolveApiKeyForProvider({
+      provider: "linkedin",
+      cfg,
+      agentDir,
+    });
+  } catch (err) {
+    const authPath = resolveAuthStorePathForDisplay(agentDir);
+    logInfo(
+      `linkedin: no token resolved (will throw). Auth store path: ${authPath}. Error: ${err instanceof Error ? err.message : String(err)}`,
+    );
+    throw err;
+  }
+  const token = result?.apiKey ? normalizeSecretInput(result.apiKey) : null;
+  if (token) {
+    const authPath = resolveAuthStorePathForDisplay(agentDir);
+    logInfo(
+      `linkedin: token resolved from ${result.source}${result.profileId ? ` (profile: ${result.profileId})` : ""}, auth store: ${authPath}, token length=${token.length}`,
+    );
+  } else {
+    logInfo(`linkedin: token empty after resolve (source: ${result?.source ?? "unknown"})`);
+  }
+  return token ?? null;
+}
+
+/** Auth store path used for LinkedIn (for diagnostics when token is missing). */
+export function getLinkedInAuthStorePath(agentDir?: string): string {
+  return resolveAuthStorePathForDisplay(agentDir);
 }

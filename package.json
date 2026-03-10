@@ -120,6 +120,10 @@
       "types": "./dist/plugin-sdk/irc.d.ts",
       "default": "./dist/plugin-sdk/irc.js"
     },
+    "./plugin-sdk/linkedin": {
+      "types": "./dist/plugin-sdk/linkedin.d.ts",
+      "default": "./dist/plugin-sdk/linkedin.js"
+    },
     "./plugin-sdk/llm-task": {
       "types": "./dist/plugin-sdk/llm-task.d.ts",
       "default": "./dist/plugin-sdk/llm-task.js"

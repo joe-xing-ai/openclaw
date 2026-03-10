@@ -14,6 +14,11 @@
       - any-glob-to-any-file:
           - "extensions/irc/**"
           - "docs/channels/irc.md"
+"extension: linkedin":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "extensions/linkedin/**"
+          - "src/plugin-sdk/linkedin.ts"
 "channel: feishu":
   - changed-files:
       - any-glob-to-any-file:
@@ -189,6 +194,12 @@
   - changed-files:
       - any-glob-to-any-file:
           - "src/agents/**"
+
+"redaction":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/redaction-system/**"
+          - "src/cli/redaction-cli.ts"
 
 "security":
   - changed-files:

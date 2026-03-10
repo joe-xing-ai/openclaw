@@ -308,7 +308,15 @@ export function createExecTool(
       const sandboxHostConfigured = defaults?.host === "sandbox";
       const requestedHost = normalizeExecHost(params.host) ?? null;
       let host: ExecHost = requestedHost ?? configuredHost;
-      if (!elevatedRequested && requestedHost && requestedHost !== configuredHost) {
+      // When model requests sandbox but sandbox is unavailable, run on configured host (e.g. gateway) instead of failing.
+      if (
+        !elevatedRequested &&
+        requestedHost === "sandbox" &&
+        configuredHost !== "sandbox" &&
+        !defaults?.sandbox
+      ) {
+        host = configuredHost;
+      } else if (!elevatedRequested && requestedHost && requestedHost !== configuredHost) {
         throw new Error(
           `exec host not allowed (requested ${renderExecHostLabel(requestedHost)}; ` +
             `configure tools.exec.host=${renderExecHostLabel(configuredHost)} to allow).`,
